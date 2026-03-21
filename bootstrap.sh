@@ -36,7 +36,7 @@
 # Option A — Run directly from GitHub (recommended):
 #   Open Terminal (Applications → Utilities → Terminal) and paste:
 #
-#     bash <(curl -fsSL https://raw.githubusercontent.com/JudgeJules/new_mac_setup/main/bootstrap.sh)
+#     bash <(curl -fsSL https://raw.githubusercontent.com/JudgeJules/dotfiles/main/bootstrap.sh)
 #
 # Option B — If you have this file locally (USB, AirDrop, etc.):
 #   Open Terminal and run:
@@ -71,7 +71,7 @@
 set -e  # Stop on any error
 
 GITHUB_USERNAME="JudgeJules"
-DOTFILES_REPO="new_mac_setup"
+DOTFILES_REPO="dotfiles"
 
 echo ""
 echo "============================================"
@@ -91,16 +91,30 @@ echo "→ Step 1: Xcode Command Line Tools"
 if xcode-select -p &>/dev/null; then
     echo "  ✓ Already installed"
 else
-    echo "  Installing... (this may take several minutes)"
-    echo "  A popup may appear — click 'Install' if it does."
+    echo "  Installing..."
+    echo ""
+    echo "  ┌─────────────────────────────────────────────────────┐"
+    echo "  │  ACTION REQUIRED:                                   │"
+    echo "  │  A macOS popup will appear asking you to install.   │"
+    echo "  │  It may be BEHIND this Terminal window.             │"
+    echo "  │  Use Cmd+Tab or check your Dock to find it.        │"
+    echo "  │  Click 'Install' and wait for it to finish.         │"
+    echo "  │  This can take 5-15 minutes depending on your       │"
+    echo "  │  internet connection. This script will wait.        │"
+    echo "  └─────────────────────────────────────────────────────┘"
+    echo ""
 
     xcode-select --install 2>/dev/null || true
 
     # Wait for installation to complete
-    echo "  Waiting for installation to complete..."
+    echo "  Waiting for Xcode CLI tools to finish installing..."
+    echo "  (This script is not frozen — it's checking every 10 seconds)"
+    printf "  "
     until xcode-select -p &>/dev/null; do
+        printf "."
         sleep 10
     done
+    echo ""
     echo "  ✓ Installed"
 fi
 echo ""
@@ -121,7 +135,7 @@ echo "  This will clone ${GITHUB_USERNAME}/${DOTFILES_REPO}"
 echo "  and run all setup scripts inside the repo."
 echo ""
 
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply "${GITHUB_USERNAME}" --source "${HOME}/.local/share/chezmoi"
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin init --apply "${GITHUB_USERNAME}" --source "${HOME}/.local/share/chezmoi"
 
 echo ""
 echo "============================================"
