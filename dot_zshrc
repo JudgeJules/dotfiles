@@ -1,0 +1,160 @@
+# ~/.zshrc
+# ---------
+# Managed by chezmoi. Do not edit directly — edit dot_zshrc in the repo.
+# To update: edit dot_zshrc in chezmoi source, then run `chezmoi apply`
+#
+# Load order:
+#   1. PATH setup          — make sure all tools are findable
+#   2. Core tools          — fnm, uv, Starship
+#   3. Shell enhancements  — fzf, zoxide, bat, eza
+#   4. Aliases             — shortcuts that use the above
+#   5. Functions           — small utilities
+#
+
+# ──────────────────────────────────────────────
+# 1. PATH
+# ──────────────────────────────────────────────
+
+# Homebrew (Apple Silicon installs to /opt/homebrew)
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# User-local binaries
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# ──────────────────────────────────────────────
+# 2. Core Tools
+# ──────────────────────────────────────────────
+
+# fnm — Node version manager
+# Reads .nvmrc or .node-version automatically when you cd into a project
+eval "$(fnm env --use-on-cd --shell zsh)"
+
+# uv — Python version + package manager
+# Makes `python` and `pip` point to whatever uv is managing
+eval "$(uv generate-shell-completion zsh)"
+export PATH="$HOME/.local/bin:$PATH"   # uv-installed tools land here
+
+# Starship — shell prompt
+# Config lives at ~/.config/starship.toml (we'll set that up separately)
+eval "$(starship init zsh)"
+
+
+# ──────────────────────────────────────────────
+# 3. Shell Enhancements
+# ──────────────────────────────────────────────
+
+# fzf — fuzzy finder
+# Ctrl+R    : fuzzy search command history (replaces default history search)
+# Ctrl+T    : fuzzy search files and paste path into command
+# Alt+C     : fuzzy cd into a subdirectory
+eval "$(fzf --zsh)"
+
+# Tell fzf to use a smarter file finder (fd respects .gitignore)
+# Falls back to find if fd isn't installed
+if command -v fd &>/dev/null; then
+    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+
+# fzf appearance — a clean minimal style
+export FZF_DEFAULT_OPTS='
+  --height 40%
+  --layout reverse
+  --border rounded
+  --prompt "❯ "
+  --pointer "▶"
+  --info inline
+'
+
+# zoxide — smarter cd
+# z <fragment>   : jump to most frecent matching directory
+# zi             : interactive fuzzy picker (uses fzf)
+# After a few days of use, z alone becomes your main navigation tool
+eval "$(zoxide init zsh --cmd cd)"
+# Note: --cmd cd makes `cd` itself smarter, not just adding `z`
+# This means your muscle memory still works, but now `cd proj` can
+# match ~/.local/share/chezmoi if that's where you go most often
+
+
+# ──────────────────────────────────────────────
+# 4. Aliases
+# ──────────────────────────────────────────────
+
+# bat — better cat (syntax highlighting, line numbers, git diff markers)
+# Aliased to cat so it's automatic — you never have to think about it
+if command -v bat &>/dev/null; then
+    alias cat='bat --pager=never'         # no paging for short files
+    alias less='bat'                       # bat handles paging for long files
+fi
+
+# eza — better ls
+if command -v eza &>/dev/null; then
+    alias ls='eza --icons --group-directories-first'
+    alias ll='eza --icons --long --git --group-directories-first'
+    alias la='eza --icons --long --git --all --group-directories-first'
+    alias lt='eza --icons --tree --level=2'   # tree view, 2 levels deep
+fi
+
+# Git shortcuts (complement the aliases in .gitconfig)
+alias g='git'
+alias gs='git status'
+alias gd='git diff'
+alias gl='git lg'          # uses the lg alias from .gitconfig (visual graph)
+alias gco='git checkout'
+alias gbr='git branch'
+
+# chezmoi shortcuts — you'll use these constantly
+alias cz='chezmoi'
+alias czcd='chezmoi cd'
+alias czap='chezmoi apply'
+alias czdi='chezmoi diff'   # preview what chezmoi would change before applying
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ~='cd ~'
+
+# Safety nets — ask before overwriting
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Misc quality of life
+alias reload='source ~/.zshrc'              # reload config without opening new tab
+alias path='echo $PATH | tr ":" "\n"'       # see PATH one entry per line
+
+
+# ──────────────────────────────────────────────
+# 5. Functions
+# ──────────────────────────────────────────────
+
+# mkcd — make a directory and immediately cd into it
+# Usage: mkcd my-new-project
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# fcd — fuzzy cd using fzf
+# Usage: fcd (no args) — opens fuzzy picker for all subdirectories
+fcd() {
+    local dir
+    dir=$(find ${1:-.} -type d 2>/dev/null | fzf +m) && cd "$dir"
+}
+
+# fkill — fuzzy kill a process
+# Usage: fkill — shows running processes, pick one to kill
+fkill() {
+    local pid
+    pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    if [ -n "$pid" ]; then
+        echo "$pid" | xargs kill -9
+        echo "Killed: $pid"
+    fi
+}
+
+# gitbranch — fuzzy switch git branch
+# Usage: gbco (no args) — fuzzy picker over all local branches
+gbco() {
+    local branch
+    branch=$(git branch | fzf | tr -d '* ') && git checkout "$branch"
+}

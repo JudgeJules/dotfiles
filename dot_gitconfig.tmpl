@@ -1,0 +1,51 @@
+# ~/.gitconfig
+# -------------
+# Managed by chezmoi. Do not edit directly — edit the template in the repo.
+# Secrets are pulled from 1Password at apply time via op:// references.
+# To update: edit dot_gitconfig.tmpl in chezmoi source, then run `chezmoi apply`
+
+[user]
+    name  = {{ onepasswordRead "op://Personal/Git Identity/name" }}
+    email = {{ onepasswordRead "op://Personal/Git Identity/email" }}
+
+[core]
+    editor     = code --wait    # Opens VS Code for commit messages, merge conflicts
+    autocrlf   = input          # Normalize line endings on commit (important on Mac)
+    excludesfile = ~/.gitignore_global
+
+[init]
+    defaultBranch = main        # Use 'main' instead of 'master' for new repos
+
+[pull]
+    rebase = true               # `git pull` rebases instead of merging (cleaner history)
+
+[push]
+    autoSetupRemote = true      # `git push` on a new branch sets up tracking automatically
+                                # No more: --set-upstream origin <branch>
+
+[rebase]
+    autoStash = true            # Stash uncommitted changes before rebase, restore after
+
+[merge]
+    conflictstyle = diff3       # Shows base + both sides in conflict markers (more context)
+
+[diff]
+    colorMoved = zebra          # Moved lines shown in different color from changed lines
+
+[branch]
+    sort = -committerdate       # `git branch` lists most recently used branches first
+
+[log]
+    abbrevCommit = true         # Short commit hashes in logs (cleaner output)
+
+[alias]
+    # Shortcuts for the commands you use most
+    st   = status
+    co   = checkout
+    br   = branch
+    lg   = log --oneline --graph --decorate --all   # Visual branch history
+    undo = reset --soft HEAD~1                       # Undo last commit, keep changes staged
+    wip  = commit -am "wip"                          # Quick save when you need to switch context
+
+[color]
+    ui = auto

@@ -2,9 +2,9 @@
 # ---------
 # Managed by chezmoi. Installed by run_once_before_03-install-packages.sh
 #
-# To add something:   add a line here, commit, then run `chezmoi apply`
-# To remove something: delete the line, commit, then run `brew bundle cleanup`
-# To check status:    run `brew bundle check --file=~/.local/share/chezmoi/Brewfile`
+# To add something:    add a line here, commit, then run `chezmoi apply`
+# To remove something: delete the line, commit, then run `brew bundle cleanup --force`
+# To check status:     run `brew bundle check --file=~/.local/share/chezmoi/Brewfile`
 #
 
 # ──────────────────────────────────────────────
@@ -13,7 +13,17 @@
 brew "git"          # Homebrew's git is newer than the Xcode CLI version
 brew "gh"           # GitHub CLI — create PRs, view issues, manage repos from terminal
 brew "chezmoi"      # Dotfile manager (initially installed via bootstrap, now Homebrew-managed)
-brew "starship"     # Shell prompt (configured separately in .zshrc)
+brew "starship"     # Shell prompt (configured in ~/.config/starship.toml)
+
+# ──────────────────────────────────────────────
+# Shell Enhancements
+# ──────────────────────────────────────────────
+brew "fzf"          # Fuzzy finder — Ctrl+R for history, Ctrl+T for files, Alt+C for dirs
+                    # Single highest-ROI shell tool. Used by zoxide, gbco, fkill functions
+brew "zoxide"       # Smarter cd — learns your frecent dirs. `cd proj` finds it automatically
+brew "bat"          # Better cat — syntax highlighting, line numbers, git diff markers
+brew "eza"          # Better ls — colors, icons, git status in file listings
+brew "fd"           # Better find — used by fzf for file search, respects .gitignore
 
 # ──────────────────────────────────────────────
 # Node
@@ -53,15 +63,9 @@ cask "jetbrains-toolbox"    # Installs/updates any JetBrains IDE from one place
 cask "docker"       # Docker Desktop — containers, compose, Docker daemon
 
 # ──────────────────────────────────────────────
-# AI / LLMs
-# ──────────────────────────────────────────────
-cask "ollama"       # Run local LLMs (Llama, Mistral, etc.) — sandboxed in Docker later
-
-# ──────────────────────────────────────────────
 # Productivity
 # ──────────────────────────────────────────────
 cask "raycast"      # Spotlight replacement — launcher, clipboard history, window snapping
-                    # Replaces Rectangle for window management if you use Raycast's built-in
 
 # ──────────────────────────────────────────────
 # Security
