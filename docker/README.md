@@ -91,6 +91,7 @@ control plane.
 | **Ollama** | Runtime that downloads and serves local models | Runs models like Llama, Mistral, Gemma locally |
 | **llm-net** | Internal Docker network | Lets containers talk to each other, isolated from host |
 | **mitmproxy** | Egress proxy | Logs and filters everything model containers send to the internet |
+| **Little Snitch** | Host-level network monitor | Covers what mitmproxy misses — monitors native processes including Ollama itself |
 
 ---
 
@@ -127,6 +128,14 @@ network exfiltration for a personal machine.
   context. Isolation doesn't protect against human error.
 - Cloud LLM APIs (OpenAI, Anthropic) receive your prompts by design. Only use
   them with data you'd be comfortable sending to those companies.
+- mitmproxy cannot monitor Ollama's network traffic — Ollama runs natively on
+  the host for Metal GPU access. Little Snitch covers this gap.
+
+### Remote access via Tailscale
+To expose your local LLM to a cloud app or another device, use Tailscale — not
+a public port. Your Mac has a stable private Tailscale IP (100.x.x.x) reachable
+only from devices on your Tailnet. A cloud app with Tailscale installed connects
+to `100.x.x.x:11434` directly. No public exposure, no firewall rules.
 
 ---
 
@@ -143,11 +152,27 @@ The alternative — editing `docker-compose.yml` directly — requires you to kn
 Docker syntax and restart containers manually every time you add a model. That's
 an engineer's workflow, not an admin's.
 
-### Why Ollama (not llama.cpp directly, not LM Studio)
+### Why Ollama (not Docker Model Runner, not llama.cpp, not LM Studio)
 - Runs as a proper service (not a one-shot CLI tool)
-- Has a clean HTTP API that Open WebUI integrates with natively
-- Manages model storage, quantization, and GPU/CPU selection automatically
-- Adding a new model is `ollama pull modelname`, not a compile step
+- Has a clean HTTP API that Open WebUI integrates with natively — first-class, not a compatibility shim
+- 45,000+ models available via `ollama pull modelname` — Docker Model Runner has ~100-200
+- Battle-tested: 2 years old vs Docker Model Runner's 1 month
+- Faster for single-user use (333-345 tok/s vs 251-279 tok/s) — vllm-metal wins on concurrent batch requests, not single-session latency
+- Adding a new model is `ollama pull modelname`, not a manual Hugging Face download
+
+**On Docker Model Runner (vllm-metal):** Docker's native inference engine, released February 2026.
+Worth re-evaluating in 12-18 months. Key facts to know:
+- Requires Docker Desktop 4.62+ (not standalone)
+- Uses MLX/safetensors format — incompatible with GGUF models Ollama uses
+- Can coexist with Ollama on the same machine (different ports: 11434 vs 12434)
+- Better throughput for concurrent requests; worse for single-session latency
+- Open WebUI connects to it as a generic OpenAI endpoint, not natively
+
+### Why Little Snitch (in addition to mitmproxy)
+mitmproxy only monitors traffic from Docker containers. Ollama runs natively on the host
+for Metal GPU access — its network traffic is invisible to mitmproxy. Little Snitch fills
+this gap by monitoring all network connections at the OS level, including native processes.
+Together they give complete coverage: containers via mitmproxy, host processes via Little Snitch.
 
 ### Why mitmproxy (not iptables, not a firewall rule)
 - **Visibility**: you can inspect traffic in a web UI at `localhost:8081`
@@ -280,9 +305,12 @@ docker/
 | Decision | Chosen | Rejected | Reason |
 |---|---|---|---|
 | Control plane | Open WebUI | Raw YAML, Portainer | Purpose-built for LLMs, right abstraction level |
-| Local runtime | Ollama | llama.cpp, LM Studio | Clean API, service model, easy model management |
+| Local runtime | Ollama | Docker Model Runner, llama.cpp, LM Studio | Maturity, 45K+ models, native Open WebUI support, faster single-session |
 | Egress proxy | mitmproxy | iptables, pfctl | Visible, scriptable, inspectable |
+| Host-level monitoring | Little Snitch | mitmproxy alone | mitmproxy only sees containers; Ollama runs on host — Little Snitch covers the gap |
+| Remote/cloud access | Tailscale | Public port + auth | No public exposure, no firewall rules, works with existing Tailnet |
 | Kill switch granularity | Group (all LLMs) | Per-container | Simpler, extensible later |
 | Model version pinning | Not pinned | Pinned in compose.yml | Too volatile, downloaded fresh each time |
 | API key storage | 1Password → Open WebUI | .env files, config files | Security, rotation, never touches disk |
 | Sensitive dir mounts | Forbidden | Allowed with restrictions | Simpler security model — no exceptions |
+| Docker Model Runner | Deferred (re-evaluate 2027) | Adopted now | 1 month old, smaller model library, no Open WebUI native support yet |

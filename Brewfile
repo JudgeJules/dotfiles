@@ -72,3 +72,4 @@ cask "raycast"      # Spotlight replacement — launcher, clipboard history, win
 # Security
 # ──────────────────────────────────────────────
 cask "1password-cli"  # Already installed by script 02 — listed here so bundle tracks it
+cask "little-snitch"  # Host-level network monitor — covers what mitmproxy misses (native processes, model runtimes running on host)
