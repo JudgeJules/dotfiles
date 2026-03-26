@@ -1,0 +1,113 @@
+# docker/compose.yml
+# -------------------
+# LLM infrastructure for local and cloud AI.
+#
+# BEFORE RUNNING:
+#   1. Copy .env.example to .env and fill in WEBUI_SECRET_KEY
+#   2. Start Ollama natively: brew services start ollama
+#   3. Start the stack: docker compose up -d
+#
+# ARCHITECTURE:
+#   Ollama runs NATIVELY on the Mac (not in Docker) for Metal GPU acceleration.
+#   Open WebUI runs in Docker and connects to Ollama via host.docker.internal.
+#   All Open WebUI internet traffic (cloud APIs, updates) routes through mitmproxy.
+#   Little Snitch (host-level) monitors Ollama's own network traffic.
+#
+# NETWORKS:
+#   llm-internal  — internal Docker network, no direct internet (Open WebUI lives here)
+#   llm-egress    — internet-facing network (mitmproxy only)
+#   mitmproxy bridges both: it receives traffic from llm-internal, forwards via llm-egress
+#
+# KILL SWITCH (cut all container internet access):
+#   docker network disconnect llm-egress mitmproxy
+# Restore:
+#   docker network connect llm-egress mitmproxy
+#
+# REMOTE ACCESS via Tailscale:
+#   By default Open WebUI binds to 127.0.0.1 (local only).
+#   To allow access from your Tailnet, change the port binding to 0.0.0.0:3000:8080
+#   and ensure Tailscale is running. Only Tailnet devices can reach the Tailscale IP.
+#   See: https://tailscale.com/kb/1242/tailscale-serve
+
+name: llm
+
+###############################################################################
+# Services                                                                    #
+###############################################################################
+
+services:
+
+  # ── Open WebUI ─────────────────────────────────────────────────────────────
+  # The control plane. Manage models, chat, connect cloud APIs.
+  # Access at: http://localhost:3000
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:8080"     # local only — change to 0.0.0.0:3000:8080 for Tailscale access
+    volumes:
+      - open-webui-data:/app/backend/data   # settings, chat history, model config
+    environment:
+      # Ollama connection — running natively on host for Metal GPU
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
+
+      # Auth — always keep enabled
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY:?WEBUI_SECRET_KEY is required — see .env.example}
+      WEBUI_AUTH: ${WEBUI_AUTH:-true}
+
+      # Route all outbound traffic through mitmproxy for logging + kill switch
+      # NO_PROXY exempts Ollama (local host) from the proxy — no need to inspect that traffic
+      HTTP_PROXY: http://mitmproxy:8080
+      HTTPS_PROXY: http://mitmproxy:8080
+      NO_PROXY: host.docker.internal,localhost,127.0.0.1
+    networks:
+      - llm-internal              # no direct internet — must go through mitmproxy
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    depends_on:
+      - mitmproxy
+
+  # ── mitmproxy ──────────────────────────────────────────────────────────────
+  # Egress proxy. Logs all outbound traffic from Open WebUI.
+  # Web UI at: http://localhost:8081 (inspect traffic in real time)
+  #
+  # This is the ONLY container with direct internet access.
+  # Stopping or disconnecting it from llm-egress = kill switch.
+  mitmproxy:
+    image: mitmproxy/mitmproxy
+    container_name: mitmproxy
+    restart: unless-stopped
+    # mitmweb: runs proxy (port 8080) + web UI (port 8081) in one process
+    # --web-host 0.0.0.0: required so the web UI is reachable from outside the container
+    command: mitmweb --web-host 0.0.0.0 --listen-host 0.0.0.0 --listen-port 8080
+    ports:
+      - "127.0.0.1:8081:8081"     # mitmproxy web UI — local only
+    networks:
+      - llm-internal              # receives proxied traffic from Open WebUI
+      - llm-egress                # the only path to the internet
+    security_opt:
+      - no-new-privileges:true
+
+###############################################################################
+# Networks                                                                    #
+###############################################################################
+
+networks:
+  llm-internal:
+    name: llm-internal
+    internal: true                # no direct internet access — enforced by Docker
+
+  llm-egress:
+    name: llm-egress              # internet-facing — mitmproxy only
+
+###############################################################################
+# Volumes                                                                     #
+###############################################################################
+
+volumes:
+  open-webui-data:
+    name: open-webui-data         # Open WebUI settings, chat history, model connections
+                                  # Never a host bind mount — no access to your home directory
