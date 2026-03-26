@@ -71,10 +71,10 @@ export FZF_DEFAULT_OPTS='
 # z <fragment>   : jump to most frecent matching directory
 # zi             : interactive fuzzy picker (uses fzf)
 # After a few days of use, z alone becomes your main navigation tool
-eval "$(zoxide init zsh --cmd cd)"
 # Note: --cmd cd makes `cd` itself smarter, not just adding `z`
 # This means your muscle memory still works, but now `cd proj` can
 # match ~/.local/share/chezmoi if that's where you go most often
+# Initialization is at the bottom of this file — zoxide requires it to be last
 
 
 # ──────────────────────────────────────────────
@@ -195,3 +195,9 @@ _docker_drift_check() {
 }
 
 precmd_functions+=(_docker_drift_check)
+
+
+# ──────────────────────────────────────────────
+# zoxide init — must be last
+# ──────────────────────────────────────────────
+eval "$(zoxide init zsh --cmd cd)"
