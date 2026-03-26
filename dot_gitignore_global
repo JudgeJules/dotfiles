@@ -1,0 +1,158 @@
+# ~/.gitignore_global
+# Global gitignore — applies to every repo on this machine.
+# For project-specific ignores, use the repo's own .gitignore.
+
+###############################################################################
+# macOS                                                                       #
+###############################################################################
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+Thumbs.db
+ehthumbs.db
+
+###############################################################################
+# Secrets & environment                                                       #
+###############################################################################
+
+.env
+.env.*
+!.env.example
+!.env.sample
+
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+
+.secret
+secrets/
+credentials/
+
+###############################################################################
+# Editors                                                                     #
+###############################################################################
+
+# Cursor / VS Code
+.cursor/
+.vscode/
+!.vscode/extensions.json    # this one is safe to commit
+
+# JetBrains (IntelliJ, PyCharm, etc.)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim / Neovim
+*.swp
+*.swo
+*~
+.netrwhist
+Session.vim
+.nvimlog
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-workspace
+
+###############################################################################
+# Language / toolchain                                                        #
+###############################################################################
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp/
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+.Python
+.venv/
+venv/
+env/
+.uv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Rust
+target/
+
+# Go
+vendor/
+
+###############################################################################
+# Build output / artifacts                                                    #
+###############################################################################
+
+dist/
+build/
+out/
+*.log
+*.pid
+*.seed
+*.pid.lock
+coverage/
+.coverage
+*.lcov
+.nyc_output/
+
+###############################################################################
+# Docker                                                                      #
+###############################################################################
+
+.docker/
+docker-compose.override.yml
+
+###############################################################################
+# Misc                                                                        #
+###############################################################################
+
+# Direnv
+.direnv/
+.envrc
+
+# chezmoi age encryption key (never commit this)
+key.txt
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej

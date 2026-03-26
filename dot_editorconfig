@@ -1,0 +1,76 @@
+# ~/.editorconfig
+# Universal editor contract — applies to every project on this machine
+# unless a project-level .editorconfig overrides it.
+# Docs: https://editorconfig.org
+
+root = true
+
+# ── Sensible defaults for everything ─────────────────────────────────────────
+[*]
+charset                  = utf-8
+end_of_line              = lf
+insert_final_newline     = true
+trim_trailing_whitespace = true
+indent_style             = space
+indent_size              = 2
+
+# ── Web / JS / TS ─────────────────────────────────────────────────────────────
+[*.{js,jsx,ts,tsx,mjs,cjs}]
+indent_size = 2
+
+[*.{html,css,scss,less,svg}]
+indent_size = 2
+
+# ── Data / config formats ─────────────────────────────────────────────────────
+[*.{json,jsonc,json5}]
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[*.toml]
+indent_size = 2
+
+[*.xml]
+indent_size = 2
+
+# ── Python ────────────────────────────────────────────────────────────────────
+# PEP 8: 4 spaces. max_line_length matches Black/Ruff default (88).
+[*.{py,pyi}]
+indent_size      = 4
+max_line_length  = 88
+
+# ── Go ────────────────────────────────────────────────────────────────────────
+# gofmt mandates tabs
+[*.go]
+indent_style = tab
+indent_size  = 4
+
+# ── Rust ──────────────────────────────────────────────────────────────────────
+[*.rs]
+indent_size     = 4
+max_line_length = 100
+
+# ── Shell ─────────────────────────────────────────────────────────────────────
+[*.{sh,zsh,bash}]
+indent_size = 2
+
+# ── Makefile ──────────────────────────────────────────────────────────────────
+# make requires tabs — non-negotiable
+[{Makefile,makefile,*.mk}]
+indent_style = tab
+indent_size  = 4
+
+# ── Markdown ──────────────────────────────────────────────────────────────────
+# Trailing spaces = intentional line break in Markdown — don't trim them
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+max_line_length          = off
+
+# ── Plaintext / prose ─────────────────────────────────────────────────────────
+[*.txt]
+max_line_length = off
+
+# ── Dotfiles / misc config ────────────────────────────────────────────────────
+[.{env,envrc,gitconfig,gitignore,npmrc}]
+indent_size = 2

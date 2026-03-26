@@ -1,0 +1,124 @@
+# ~/.config/starship.toml
+# Starship prompt configuration
+# Docs: https://starship.rs/config/
+
+# ── Global ────────────────────────────────────────────────────────────────────
+
+# Two-line prompt: info on line 1, $ on line 2
+add_newline = true
+
+format = """
+$username$hostname$directory$git_branch$git_status$git_state\
+$nodejs$python$rust$golang$docker_context\
+$jobs$cmd_duration
+$character"""
+
+# ── Prompt character ──────────────────────────────────────────────────────────
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol   = "[❯](bold red)"
+
+# ── Directory ─────────────────────────────────────────────────────────────────
+
+[directory]
+truncation_length       = 3       # show up to 3 parent dirs
+truncate_to_repo        = true    # shorten to repo root when inside a git repo
+style                   = "bold cyan"
+read_only               = " 󰌾"
+before_repo_root_style  = "dimmed cyan"
+repo_root_style         = "bold cyan"
+repo_root_format        = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+# ── System context (username + hostname) ─────────────────────────────────────
+# Shows as "user@host " — only renders when useful:
+#   username: shown when root or SSH session
+#   hostname: shown when SSH session
+
+[username]
+show_always = false               # only show when root or SSH
+style_user  = "bold yellow"
+style_root  = "bold red"
+format      = "[$user]($style)[@](dimmed white)"
+
+[hostname]
+ssh_only   = true                 # only show hostname over SSH
+style      = "bold yellow"
+format     = "[$hostname]($style) "
+trim_at    = "."                  # show just the short hostname, not FQDN
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+
+[git_branch]
+symbol = " "
+style  = "bold purple"
+format = "[$symbol$branch(:$remote_branch)]($style) "
+
+[git_status]
+format      = "([$all_status$ahead_behind]($style) )"
+style       = "bold yellow"
+conflicted  = "⚡"
+ahead       = "⇡${count}"
+behind      = "⇣${count}"
+diverged    = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked   = "?${count}"
+stashed     = "*${count}"
+modified    = "!${count}"
+staged      = "+${count}"
+renamed     = "»${count}"
+deleted     = "✘${count}"
+
+[git_state]
+# Shows rebase/merge/bisect/cherry-pick state
+format = "\\([$state( $progress_current/$progress_total)]($style)\\) "
+style  = "bold red"
+
+# ── Languages (only shown when relevant files present) ───────────────────────
+
+[nodejs]
+symbol = " "
+style  = "bold green"
+format = "[$symbol($version )]($style)"
+# Triggers on: package.json, .nvmrc, .node-version
+
+[python]
+symbol           = " "
+style            = "bold yellow"
+format           = "[$symbol($version )($virtualenv )]($style)"
+detect_files     = ["pyproject.toml", "requirements.txt", ".python-version", "setup.py"]
+# Shows virtualenv name if one is active
+
+[rust]
+symbol = " "
+style  = "bold red"
+format = "[$symbol($version )]($style)"
+
+[golang]
+symbol = " "
+style  = "bold cyan"
+format = "[$symbol($version )]($style)"
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+
+[docker_context]
+symbol = " "
+style  = "bold blue"
+format = "[$symbol$context]($style) "
+# Only shows when DOCKER_CONTEXT is set to something other than "default"
+only_with_files = true
+
+# ── Command duration ──────────────────────────────────────────────────────────
+
+[cmd_duration]
+min_time          = 2_000         # only show for commands taking > 2s
+style             = "dimmed yellow"
+format            = "[took $duration]($style) "
+show_milliseconds = false
+
+# ── Background jobs ───────────────────────────────────────────────────────────
+
+[jobs]
+symbol    = "✦"
+style     = "bold blue"
+format    = "[$symbol$number]($style) "
+threshold = 1                     # show as soon as there's 1 background job

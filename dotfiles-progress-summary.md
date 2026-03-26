@@ -24,7 +24,9 @@
   - `run_once_before_03-install-packages.sh`
   - `run_once_before_04-install-fonts.sh`
   - `run_once_before_05-macos-defaults.sh` ✅
-- **macOS defaults script** — comprehensive system configuration ✅
+- **macOS defaults script** — comprehensive system configuration ✅ (updated to Tahoe edition from jordan-rs/dotfiles-v2)
+- **Starship prompt config** — `dot_config/starship.toml` ✅
+  - Two-line prompt, directory truncation, full git status, language versions (Node/Python/Rust/Go), Docker context, command duration, background jobs, system context (username/hostname shown only over SSH)
   - Dock: auto-hide, fast (0.1s), bottom, size 48, no recents, minimize to app icon
   - Finder: extensions, hidden files, path bar, status bar, list view, folders first, POSIX path in title
   - Keyboard: fast repeat (2), short delay (15), no autocorrect, no smart quotes/dashes, press-and-hold disabled, full keyboard access
@@ -44,7 +46,6 @@
 
 ### Known issues / still to do:
 - **Raycast** needs Cmd+Space set manually as its hotkey (System Settings → Keyboard → Shortcuts → Spotlight → uncheck, then set in Raycast prefs)
-- **Starship prompt config** — `dot_zshrc` references `~/.config/starship.toml` but file doesn't exist yet
 - **`.gitignore_global`** — referenced in `dot_gitconfig.tmpl` but not created yet
 - **Kiro (AWS AI IDE)** — not on Homebrew, install manually from https://kiro.dev
 - **Docker network design** — llm-net, egress proxy, kill switches (not started)
@@ -54,7 +55,6 @@
 - **Threat model** — still needs to be defined
 
 ### Build order — remaining:
-4. **Shell environment** — Starship prompt config (`~/.config/starship.toml`)
 5. **`.gitignore_global`** — global git ignore file
 6. **Editor adapter system** — `.editorconfig` as universal contract, per-editor adapter scripts
 7. **Docker network design** — llm-net, egress proxy, kill switches
