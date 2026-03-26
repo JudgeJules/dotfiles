@@ -160,14 +160,18 @@ gbco() {
 }
 
 
-# ghc — clone a GitHub repo into ~/code/github.com/<owner>/<repo>
-# Usage: ghc JudgeJules/my-repo
-# Mirrors GitHub's URL structure locally so you always know where things are
-ghc() {
-    local repo="$1"
-    local dest="$HOME/code/github.com/${repo}"
-    mkdir -p "$(dirname "$dest")"
-    gh repo clone "$repo" "$dest" "${@:2}" && cd "$dest"
+# gh — intercepts `gh repo clone` to always land in ~/code/github.com/<owner>/<repo>
+# All other gh commands pass through unchanged.
+# Usage: gh repo clone JudgeJules/my-repo  (works exactly as before, just lands in the right place)
+gh() {
+    if [[ "$1" == "repo" && "$2" == "clone" && -n "$3" ]]; then
+        local repo="$3"
+        local dest="$HOME/code/github.com/${repo}"
+        mkdir -p "$(dirname "$dest")"
+        command gh repo clone "$repo" "$dest" "${@:4}" && cd "$dest"
+    else
+        command gh "$@"
+    fi
 }
 
 
