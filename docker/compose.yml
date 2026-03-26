@@ -64,7 +64,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"   # resolves to Mac host IP so Ollama is reachable
     networks:
-      - llm-internal              # no direct internet — must go through mitmproxy
+      - llm-internal              # container-to-container communication (mitmproxy)
+      - host-access               # required for host port forwarding on Docker Desktop macOS
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -109,6 +110,11 @@ networks:
 
   llm-egress:
     name: llm-egress              # internet-facing — mitmproxy only
+
+  host-access:
+    name: host-access             # bridge network for host port forwarding (macOS Docker Desktop limitation)
+                                  # open-webui is on this network purely so port 3000 binds on the host
+                                  # internet traffic still routes through mitmproxy via HTTP_PROXY
 
 ###############################################################################
 # Volumes                                                                     #
