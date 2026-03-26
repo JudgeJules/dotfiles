@@ -166,6 +166,7 @@ gbco() {
 ghc() {
     local repo="$1"
     local dest="$HOME/code/github.com/${repo}"
+    mkdir -p "$(dirname "$dest")"
     gh repo clone "$repo" "$dest" "${@:2}" && cd "$dest"
 }
 
