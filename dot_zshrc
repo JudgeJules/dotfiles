@@ -160,6 +160,16 @@ gbco() {
 }
 
 
+# ghc — clone a GitHub repo into ~/code/github.com/<owner>/<repo>
+# Usage: ghc JudgeJules/my-repo
+# Mirrors GitHub's URL structure locally so you always know where things are
+ghc() {
+    local repo="$1"
+    local dest="$HOME/code/github.com/${repo}"
+    gh repo clone "$repo" "$dest" "${@:2}" && cd "$dest"
+}
+
+
 # ──────────────────────────────────────────────
 # 6. Hooks
 # ──────────────────────────────────────────────
