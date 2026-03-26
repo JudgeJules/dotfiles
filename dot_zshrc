@@ -158,3 +158,40 @@ gbco() {
     local branch
     branch=$(git branch | fzf | tr -d '* ') && git checkout "$branch"
 }
+
+
+# ──────────────────────────────────────────────
+# 6. Hooks
+# ──────────────────────────────────────────────
+
+# Docker dotfile drift check
+# Runs before every prompt. If you're in ~/docker and compose.yml or
+# .env.example differs from the chezmoi source, warns you to commit back.
+_docker_drift_check() {
+    [[ "$PWD" != "$HOME/docker"* ]] && return
+
+    local chezmoi_src="$HOME/.local/share/chezmoi/docker"
+    local warned=false
+
+    for f in compose.yml .env.example; do
+        local local_file="$HOME/docker/$f"
+        local source_file="$chezmoi_src/$f"
+        if [[ -f "$local_file" && -f "$source_file" ]]; then
+            if ! diff -q "$local_file" "$source_file" &>/dev/null; then
+                if ! $warned; then
+                    echo ""
+                    echo "⚠  ~/docker has uncommitted changes:"
+                    warned=true
+                fi
+                echo "   $f differs from chezmoi source"
+            fi
+        fi
+    done
+
+    if $warned; then
+        echo "   Run: czcd && git add docker/ && git commit"
+        echo ""
+    fi
+}
+
+precmd_functions+=(_docker_drift_check)
