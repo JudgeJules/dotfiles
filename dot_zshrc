@@ -160,9 +160,9 @@ gbco() {
 }
 
 
-# gh — intercepts `gh repo clone` to always land in ~/code/github.com/<owner>/<repo>
+# gh — wraps the real gh CLI
+# `gh repo clone owner/repo` always lands in ~/code/github.com/owner/repo
 # All other gh commands pass through unchanged.
-# Usage: gh repo clone JudgeJules/my-repo  (works exactly as before, just lands in the right place)
 gh() {
     if [[ "$1" == "repo" && "$2" == "clone" && -n "$3" ]]; then
         local repo="$3"
