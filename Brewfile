@@ -11,6 +11,7 @@
 # Core CLI
 # ──────────────────────────────────────────────
 brew "git"          # Homebrew's git is newer than the Xcode CLI version
+brew "gitleaks"     # Secret scanning — blocks commits containing API keys, tokens, passwords
 brew "gh"           # GitHub CLI — create PRs, view issues, manage repos from terminal
 brew "chezmoi"      # Dotfile manager (initially installed via bootstrap, now Homebrew-managed)
 brew "starship"     # Shell prompt (configured in ~/.config/starship.toml)

@@ -9,9 +9,10 @@
     email = {{ onepasswordRead "op://Personal/Git Identity/email" }}
 
 [core]
-    editor     = code --wait    # Opens VS Code for commit messages, merge conflicts
-    autocrlf   = input          # Normalize line endings on commit (important on Mac)
+    editor       = code --wait          # Opens VS Code for commit messages, merge conflicts
+    autocrlf     = input                # Normalize line endings on commit (important on Mac)
     excludesfile = ~/.gitignore_global
+    hooksPath    = ~/.config/git/hooks  # Global hooks — applies to every repo on this machine
 
 [init]
     defaultBranch = main        # Use 'main' instead of 'master' for new repos
