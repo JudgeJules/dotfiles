@@ -18,7 +18,7 @@
 - **dot_gitconfig.tmpl** — full git config with aliases, rebase, diff3, etc. ✅
 - **dot_zshrc** — full shell config with PATH, fnm, uv, Starship, fzf, zoxide, bat, eza, aliases, functions, docker drift check hook ✅
 - **Brewfile** — all CLI tools, apps, fonts managed via brew bundle ✅
-- **run_once scripts** — all eight in place ✅
+- **run_once scripts** — all ten in place ✅
   - `run_once_before_01-install-homebrew.sh`
   - `run_once_before_02-install-1password-cli.sh`
   - `run_once_before_03-install-packages.sh`
@@ -27,6 +27,11 @@
   - `run_once_before_06-editor-settings.sh`
   - `run_once_before_07-tailscale.sh`
   - `run_once_before_08-docker-setup.sh`
+  - `run_once_before_09-code-directory.sh`
+  - `run_once_before_10-gh-auth.sh`
+- **Code directory structure** — `~/code/github.com/<owner>/<repo>` mirrors GitHub URL structure ✅
+- **gh repo clone routing** — `gh repo clone owner/repo` always lands in `~/code/github.com/owner/repo` via gh wrapper in .zshrc ✅
+- **gh CLI auth** — `run_once_before_10-gh-auth.sh` authenticates via PAT stored in 1Password (`op://Personal/gh CLI - dotfiles/token`) ✅
 - **macOS defaults script** — comprehensive Tahoe edition from jordan-rs/dotfiles-v2 ✅
 - **Starship prompt config** — `dot_config/starship.toml` ✅
 - **`.gitignore_global`** — global ignores for macOS, secrets, editors, languages, build artifacts ✅
