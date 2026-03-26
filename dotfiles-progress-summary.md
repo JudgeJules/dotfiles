@@ -16,69 +16,82 @@
 - **Git email** uses GitHub no-reply address (`3988877+JudgeJules@users.noreply.github.com`) ✅
 - **SSH config** (`~/.ssh/config`) routes GitHub through 1Password agent socket ✅
 - **dot_gitconfig.tmpl** — full git config with aliases, rebase, diff3, etc. ✅
-- **dot_zshrc** — full shell config with PATH, fnm, uv, Starship, fzf, zoxide, bat, eza, aliases, functions ✅
+- **dot_zshrc** — full shell config with PATH, fnm, uv, Starship, fzf, zoxide, bat, eza, aliases, functions, docker drift check hook ✅
 - **Brewfile** — all CLI tools, apps, fonts managed via brew bundle ✅
-- **run_once scripts** — all four in place and working ✅
+- **run_once scripts** — all eight in place ✅
   - `run_once_before_01-install-homebrew.sh`
   - `run_once_before_02-install-1password-cli.sh`
   - `run_once_before_03-install-packages.sh`
   - `run_once_before_04-install-fonts.sh`
-  - `run_once_before_05-macos-defaults.sh` ✅
-- **macOS defaults script** — comprehensive system configuration ✅ (updated to Tahoe edition from jordan-rs/dotfiles-v2)
+  - `run_once_before_05-macos-defaults.sh`
+  - `run_once_before_06-editor-settings.sh`
+  - `run_once_before_07-tailscale.sh`
+  - `run_once_before_08-docker-setup.sh`
+- **macOS defaults script** — comprehensive Tahoe edition from jordan-rs/dotfiles-v2 ✅
 - **Starship prompt config** — `dot_config/starship.toml` ✅
 - **`.gitignore_global`** — global ignores for macOS, secrets, editors, languages, build artifacts ✅
 - **`.editorconfig`** — universal coding contract (indent, charset, line endings, per-language overrides) ✅
-- **Editor settings adapter** — `run_once_before_06-editor-settings.sh` writes settings.json for VS Code/Cursor and Sublime Text Preferences; JetBrains reads `.editorconfig` natively ✅
-- **Pre-commit secret scanning** — global gitleaks hook via `core.hooksPath`; scans staged files on every commit in every repo; gitleaks v8.30.1 installed ✅
-  - Two-line prompt, directory truncation, full git status, language versions (Node/Python/Rust/Go), Docker context, command duration, background jobs, system context (username/hostname shown only over SSH)
-  - Dock: auto-hide, fast (0.1s), bottom, size 48, no recents, minimize to app icon
-  - Finder: extensions, hidden files, path bar, status bar, list view, folders first, POSIX path in title
-  - Keyboard: fast repeat (2), short delay (15), no autocorrect, no smart quotes/dashes, press-and-hold disabled, full keyboard access
-  - Trackpad: tap to click, traditional scroll direction
-  - Sound: muted startup chime, no volume feedback, no UI sounds
-  - Screenshots: save to ~/Screenshots, PNG, no shadow
-  - Display: screensaver after 30 minutes
-  - Mac App Store: check every 14 days, auto-download, critical updates only
-  - General: dark mode, quit keeps windows
-  - Hot corners: top-right = Mission Control, bottom-right = Desktop
-  - Security: LSQuarantine disabled (no "are you sure?" dialogs)
-  - Bluetooth Audio: high quality AAC codec
-  - iCloud: save new docs locally by default
-  - Disk Utility: show all partitions and hidden volumes
-  - Spotlight: disabled entirely (Raycast handles it), Cmd+Space freed up for Raycast
-  - Time Machine: local backups disabled
+- **Editor settings adapter** — `run_once_before_06-editor-settings.sh` writes settings.json for VS Code/Cursor and Sublime Text; JetBrains reads `.editorconfig` natively ✅
+- **Pre-commit secret scanning** — global gitleaks hook via `core.hooksPath`; scans staged files on every commit in every repo ✅
+- **Tailscale** — `run_once_before_07-tailscale.sh` connects via auth key pulled from 1Password ✅
+- **LLM Docker stack** — fully working ✅
+  - Open WebUI at http://localhost:3000 (auth enabled)
+  - mitmproxy at http://localhost:8081 (egress proxy + traffic inspector)
+  - Ollama running natively as Ollama.app (Metal GPU, not in Docker)
+  - docker/compose.yml, docker/.env.example, docker/README.md, docker/.gitignore all committed
+  - Kill switch: `docker network disconnect llm-egress mitmproxy`
+  - `_docker_drift_check` precmd hook in .zshrc warns when ~/docker files differ from chezmoi source
+  - Architecture decision log in docker/README.md documents all tradeoffs
 
 ### Known issues / still to do:
 - **Raycast** needs Cmd+Space set manually as its hotkey (System Settings → Keyboard → Shortcuts → Spotlight → uncheck, then set in Raycast prefs)
 - **Kiro (AWS AI IDE)** — not on Homebrew, install manually from https://kiro.dev
-- **Docker network design** — llm-net, egress proxy, kill switches (not started)
-- **LLM runtime registry** — Ollama first, designed for adding others (not started)
-- **Editor adapter system** — `.editorconfig` as universal contract, per-editor adapter scripts (not started)
-- **Pre-commit hooks** — secret scanning (not started)
-- **Threat model** — still needs to be defined
+- **mitmproxy SSL interception** — Open WebUI gets `SSLCertVerificationError` when reaching external HTTPS APIs (e.g. OpenAI) through mitmproxy. mitmproxy CA cert not trusted inside the container. Does not affect Ollama (local). Options if needed: bake mitmproxy CA into open-webui image, or add `PYTHONHTTPSVERIFY=0` env (insecure). Currently: cloud APIs work when added directly in Open WebUI settings (bypasses cert issue for API calls made by the UI layer).
+- **Little Snitch** — installed via Brewfile but requires manual activation and rule setup post-install
 
-### Build order — remaining:
-7. **Docker network design** — llm-net, egress proxy, kill switches
-8. **LLM runtime registry** — Ollama first, designed for adding others
+### Ollama status:
+- Installed as **cask** (`brew install --cask ollama`) — Ollama.app 0.18.2
+- The formula version caused a Metal crash on macOS 26 Tahoe (`ggml_metal_library_init` failure, MPPTensorOpsMatMul2dImpl.h static_assert). The cask (app bundle) resolves it.
+- Models currently pulled: `gemma3:latest` (4.3B Q4_K_M), `qwen3.5:latest` (9.7B Q4_K_M)
+- Pull more from Open WebUI: Settings → Models → search + download
 
 ### Architecture decisions made:
 - **chezmoi** for dotfile management
 - **1Password** as single identity/secrets layer — chezmoi templates pull secrets at apply time via `op://` references
 - Repo is **public** because secrets never land in it
 - Bootstrap script is minimal — only installs Xcode CLI tools + chezmoi
-- chezmoi binary installs to `/usr/local/bin` via `-b` flag
 - run_once scripts handle all heavy setup inside the repo
+- **Ollama on host** (not Docker) — required for Metal GPU; Little Snitch monitors its network traffic
+- **mitmproxy** as container egress proxy — all Open WebUI internet traffic logged + kill-switchable
+- **llm-internal network** (`internal: true`) — no direct internet for Open WebUI
+- **host-access network** — workaround for Docker Desktop macOS port-forwarding limitation with internal-only networks
+- **extra_hosts: host-gateway** — enables `host.docker.internal` resolution inside the internal network
+- **Docker Model Runner / vllm-metal** deferred — only ~200 models (vs 45K GGUF), 1 month old, no native Open WebUI support; re-evaluate 2027
+- **~/docker** intentionally NOT chezmoi-managed — allows local iteration; drift check in .zshrc catches uncommitted changes
 
-### Key requirements:
-- Personal Mac, work tools accessed via web (no VPN)
-- Local + remote LLMs, Docker-based sandboxing
-- LLMs must NEVER touch host OS — sandboxing/isolation is critical
-- Docker containers need internet access with kill switches
-- Containers need to talk to each other
-- Editor-agnostic setup — `.editorconfig` as the contract, adapter scripts per editor
-- Git workflow: LLMs always work on `llm/*` branches, never touch main
-- Pre-commit hooks for secret scanning
-- **Observability** gap flagged but not addressed yet
+### LLM stack quick reference:
+```bash
+# Start stack
+cd ~/docker && docker compose up -d
+
+# Stop stack
+docker compose down
+
+# Kill switch (cut container internet)
+docker network disconnect llm-egress mitmproxy
+
+# Restore
+docker network connect llm-egress mitmproxy
+
+# View egress traffic
+open http://localhost:8081
+
+# Access Open WebUI
+open http://localhost:3000
+
+# Check Ollama models
+curl http://localhost:11434/api/tags
+```
 
 ### Git workflow:
 ```
@@ -98,5 +111,5 @@ git push                # send to GitHub
 - `git commit --amend --author` — rewrite commit author metadata
 
 ### The user's GitHub username: JudgeJules
-### Machine: MacBook Pro, Apple Silicon, macOS, fresh setup
+### Machine: MacBook Pro, Apple Silicon, macOS 26 Tahoe, fresh setup
 ### Git email: 3988877+JudgeJules@users.noreply.github.com

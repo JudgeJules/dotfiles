@@ -62,6 +62,7 @@ cask "jetbrains-toolbox"    # Installs/updates any JetBrains IDE from one place
 # Dev Tools
 # ──────────────────────────────────────────────
 cask "docker"       # Docker Desktop — containers, compose, Docker daemon
+cask "ollama"       # Local LLM runtime — runs models on Metal GPU (host, not Docker)
 
 # ──────────────────────────────────────────────
 # Productivity
