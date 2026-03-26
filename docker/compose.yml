@@ -61,6 +61,8 @@ services:
       HTTP_PROXY: http://mitmproxy:8080
       HTTPS_PROXY: http://mitmproxy:8080
       NO_PROXY: host.docker.internal,localhost,127.0.0.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # resolves to Mac host IP so Ollama is reachable
     networks:
       - llm-internal              # no direct internet — must go through mitmproxy
     security_opt:
@@ -82,7 +84,12 @@ services:
     restart: unless-stopped
     # mitmweb: runs proxy (port 8080) + web UI (port 8081) in one process
     # --web-host 0.0.0.0: required so the web UI is reachable from outside the container
-    command: mitmweb --web-host 0.0.0.0 --listen-host 0.0.0.0 --listen-port 8080
+    command: >
+      mitmweb
+      --web-host 0.0.0.0
+      --listen-host 0.0.0.0
+      --listen-port 8080
+      --set web_password=${MITMPROXY_PASSWORD:-admin}
     ports:
       - "127.0.0.1:8081:8081"     # mitmproxy web UI — local only
     networks:
