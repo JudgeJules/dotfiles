@@ -1,5 +1,9 @@
 # Jordan's Global Claude Rules
 
+## Project Setup
+At the start of any session in a code repository, check if a CLAUDE.md exists in the
+project root. If it doesn't, ask the user if they'd like to create one before proceeding.
+
 ## General Behavior
 When requirements are ambiguous or unclear, always ask for clarification before proceeding.
 Do not assume intent — ask. This applies to vague instructions, multiple possible
