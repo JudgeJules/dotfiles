@@ -58,6 +58,16 @@
 - **`gh repo clone` routing** — wrapper in .zshrc enforces correct landing directory ✅
 - **gh CLI auth** — automated via 1Password PAT in `run_once_before_10-gh-auth.sh` ✅
 
+### mac-file-automation (machine/jordans-mbp branch):
+- Screenshot renamer daemon running via launchd ✅
+- Two-path pipeline: OCR (ocrmac) → gemma3:latest for text, qwen3-vl:8b for image-only ✅
+- Structured output (Ollama JSON schema) for reliable responses across models ✅
+- Dynamic plist generation — no hardcoded paths ✅
+- `scripts/compare_models.py` for benchmarking models against real screenshots ✅
+- Model learnings documented in CLAUDE.md
+- Logs at: `~/code/github.com/JudgeJules/mac-file-automation/logs/screenshot_renamer.err`
+- **Pending**: test vision path (qwen3-vl:8b) on a real image-only screenshot
+
 ### Known issues / still to do:
 - **Raycast** needs Cmd+Space set manually as its hotkey (System Settings → Keyboard → Shortcuts → Spotlight → uncheck, then set in Raycast prefs)
 - **Kiro (AWS AI IDE)** — not on Homebrew, install manually from https://kiro.dev
