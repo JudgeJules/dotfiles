@@ -48,6 +48,16 @@
   - `_docker_drift_check` precmd hook in .zshrc warns when ~/docker files differ from chezmoi source
   - Architecture decision log in docker/README.md documents all tradeoffs
 
+- **Global `~/.claude/CLAUDE.md`** — personal Claude rules deployed via chezmoi ✅
+  - General behavior (ask before assuming intent)
+  - DOING/EXPECT/IF protocol for significant actions
+  - Traffic light autonomy levels (🟢🟡🔴)
+  - Code standards (explicit errors, no unsolicited fallbacks, no --no-verify)
+  - Blocked state protocol
+- **`~/code/github.com/` directory structure** — mirrors GitHub URL structure ✅
+- **`gh repo clone` routing** — wrapper in .zshrc enforces correct landing directory ✅
+- **gh CLI auth** — automated via 1Password PAT in `run_once_before_10-gh-auth.sh` ✅
+
 ### Known issues / still to do:
 - **Raycast** needs Cmd+Space set manually as its hotkey (System Settings → Keyboard → Shortcuts → Spotlight → uncheck, then set in Raycast prefs)
 - **Kiro (AWS AI IDE)** — not on Homebrew, install manually from https://kiro.dev
