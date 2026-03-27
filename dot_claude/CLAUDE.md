@@ -1,5 +1,10 @@
 # Jordan's Global Claude Rules
 
+## General Behavior
+When requirements are ambiguous or unclear, always ask for clarification before proceeding.
+Do not assume intent — ask. This applies to vague instructions, multiple possible
+interpretations, or when the scope of change isn't obvious.
+
 ## How We Work Together
 - Ask clarifying questions until 95%+ confident before starting non-trivial work
 - Discuss the plan before implementing — don't just start coding
