@@ -18,17 +18,22 @@
 - **dot_gitconfig.tmpl** — full git config with aliases, rebase, diff3, etc. ✅
 - **dot_zshrc** — full shell config with PATH, fnm, uv, Starship, fzf, zoxide, bat, eza, aliases, functions, docker drift check hook ✅
 - **Brewfile** — all CLI tools, apps, fonts managed via brew bundle ✅
-- **run_once scripts** — all ten in place ✅
+  - Added: `jq`, `yq`, `just`, `ripgrep`, `direnv`, `git-delta`
+- **run_once scripts** — eleven in place ✅
   - `run_once_before_01-install-homebrew.sh`
   - `run_once_before_02-install-1password-cli.sh`
   - `run_once_before_03-install-packages.sh`
   - `run_once_before_04-install-fonts.sh`
-  - `run_once_before_05-macos-defaults.sh`
+  - `run_once_before_05-macos-defaults.sh` (Finder default: column view)
   - `run_once_before_06-editor-settings.sh`
   - `run_once_before_07-tailscale.sh`
   - `run_once_before_08-docker-setup.sh`
   - `run_once_before_09-code-directory.sh`
   - `run_once_before_10-gh-auth.sh`
+  - `run_once_before_11-node-setup.sh` — installs Node LTS via fnm, sets as default
+- **Node** — installed via fnm (LTS, currently v24.14.1); per-project version pinning via `.nvmrc` ✅
+- **direnv** — per-project env vars; hook in .zshrc ✅
+- **git-delta** — wired as `core.pager` in .gitconfig; side-by-side diffs ✅
 - **Code directory structure** — `~/code/github.com/<owner>/<repo>` mirrors GitHub URL structure ✅
 - **gh repo clone routing** — `gh repo clone owner/repo` always lands in `~/code/github.com/owner/repo` via gh wrapper in .zshrc ✅
 - **gh CLI auth** — `run_once_before_10-gh-auth.sh` authenticates via PAT stored in 1Password (`op://Personal/gh CLI - dotfiles/token`) ✅
