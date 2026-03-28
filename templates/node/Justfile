@@ -1,0 +1,49 @@
+# Justfile — Node project task runner
+# Usage: just <recipe>  |  just (lists all recipes)
+#
+# Assumes: fnm for Node version management (.nvmrc in project root)
+#          npm as package manager
+#          scripts defined in package.json for dev/test/lint/build
+#
+# Copy to project root and customise as needed.
+
+set dotenv-load := true   # automatically loads .env if present
+
+default:
+    @just --list
+
+# Install dependencies
+install:
+    npm install
+
+# Run dev server
+dev:
+    npm run dev
+
+# Run tests
+test:
+    npm test
+
+# Run tests in watch mode
+test-watch:
+    npm run test:watch
+
+# Lint (check only)
+lint:
+    npm run lint
+
+# Format code
+fmt:
+    npm run format
+
+# Build for production
+build:
+    npm run build
+
+# Remove generated artifacts
+clean:
+    rm -rf node_modules dist .next out coverage
+
+# Install fresh — clean install from lockfile
+reinstall: clean
+    npm ci

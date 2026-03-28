@@ -1,0 +1,52 @@
+# Justfile — Python project task runner
+# Usage: just <recipe>  |  just (lists all recipes)
+#
+# Assumes: uv for environment + package management
+#          ruff for linting + formatting
+#          pytest for tests
+#
+# Copy to project root and customise as needed.
+
+set dotenv-load := true   # automatically loads .env if present
+
+default:
+    @just --list
+
+# Create venv and install dependencies
+install:
+    uv venv
+    uv pip install -r requirements.txt
+
+# Install with dev dependencies (assumes requirements-dev.txt)
+install-dev:
+    uv venv
+    uv pip install -r requirements.txt -r requirements-dev.txt
+
+# Run the project (adjust entrypoint as needed)
+dev:
+    uv run python -m app
+
+# Run tests
+test:
+    uv run pytest
+
+# Run tests with coverage
+test-cov:
+    uv run pytest --cov --cov-report=term-missing
+
+# Lint (check only, no changes)
+lint:
+    uv run ruff check .
+
+# Format code
+fmt:
+    uv run ruff format .
+
+# Lint + format in one pass (good pre-commit)
+check: lint fmt
+
+# Remove generated artifacts
+clean:
+    rm -rf .venv dist build __pycache__ .pytest_cache .ruff_cache
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    find . -type f -name "*.pyc" -delete 2>/dev/null || true
