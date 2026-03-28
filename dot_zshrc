@@ -39,6 +39,11 @@ export PATH="$HOME/.local/bin:$PATH"   # uv-installed tools land here
 # Config lives at ~/.config/starship.toml (we'll set that up separately)
 eval "$(starship init zsh)"
 
+# direnv — per-project environment variables
+# Automatically loads .envrc when you cd into a project, unloads when you leave
+# Use for API keys, PYTHONPATH, tool version pins — anything project-specific
+eval "$(direnv hook zsh)"
+
 
 # ──────────────────────────────────────────────
 # 3. Shell Enhancements

@@ -50,3 +50,15 @@
 
 [color]
     ui = auto
+
+[core]
+    pager = delta           # Use delta for all git output (diff, log, show, etc.)
+
+[interactive]
+    diffFilter = delta --color-only   # delta highlights in `git add -p` interactive mode
+
+[delta]
+    navigate = true         # n/N to jump between diff sections
+    side-by-side = true     # Show old/new side by side instead of unified diff
+    line-numbers = true
+    syntax-theme = Dracula

@@ -65,6 +65,22 @@ cask "docker"       # Docker Desktop — containers, compose, Docker daemon
 cask "ollama"       # Local LLM runtime — runs models on Metal GPU (host, not Docker)
 
 # ──────────────────────────────────────────────
+# Data + Task
+# ──────────────────────────────────────────────
+brew "jq"           # JSON processor — the standard. Parse, filter, transform JSON in terminal
+brew "yq"           # YAML processor — same idea as jq but for YAML (mikefarah's Go version)
+brew "just"         # Task runner — modern make replacement. Clean syntax, LLMs generate it reliably
+brew "ripgrep"      # Fast search (rg) — respects .gitignore, used internally by Claude Code
+
+# ──────────────────────────────────────────────
+# Dev Environment
+# ──────────────────────────────────────────────
+brew "direnv"       # Per-project env vars — loads .envrc when you cd in, unloads when you leave
+                    # Use for API keys, project-specific PATH, tool versions
+brew "git-delta"    # Better git diffs — syntax highlighting, side-by-side, line numbers
+                    # Configured in .gitconfig as core.pager
+
+# ──────────────────────────────────────────────
 # Productivity
 # ──────────────────────────────────────────────
 cask "raycast"      # Spotlight replacement — launcher, clipboard history, window snapping
