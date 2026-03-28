@@ -34,6 +34,10 @@
 - **Node** — installed via fnm (LTS, currently v24.14.1); per-project version pinning via `.nvmrc` ✅
 - **direnv** — per-project env vars; hook in .zshrc ✅
 - **git-delta** — wired as `core.pager` in .gitconfig; side-by-side diffs ✅
+- **Project templates** — `~/.local/share/chezmoi/templates/` ✅
+  - `python/` — Justfile (uv, pytest, ruff) + .envrc (venv activation, PYTHONPATH, .env loading)
+  - `node/` — Justfile (npm scripts, clean, reinstall) + .envrc (fnm version switch, .env loading)
+  - Usage: `cp ~/.local/share/chezmoi/templates/python/{Justfile,.envrc} . && direnv allow`
 - **Code directory structure** — `~/code/github.com/<owner>/<repo>` mirrors GitHub URL structure ✅
 - **gh repo clone routing** — `gh repo clone owner/repo` always lands in `~/code/github.com/owner/repo` via gh wrapper in .zshrc ✅
 - **gh CLI auth** — `run_once_before_10-gh-auth.sh` authenticates via PAT stored in 1Password (`op://Personal/gh CLI - dotfiles/token`) ✅
