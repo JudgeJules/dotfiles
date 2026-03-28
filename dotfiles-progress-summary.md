@@ -61,12 +61,16 @@
 ### mac-file-automation (machine/jordans-mbp branch):
 - Screenshot renamer daemon running via launchd ✅
 - Two-path pipeline: OCR (ocrmac) → gemma3:latest for text, qwen3-vl:8b for image-only ✅
-- Structured output (Ollama JSON schema) for reliable responses across models ✅
+- Vision path confirmed working on real image-only screenshots ✅
 - Dynamic plist generation — no hardcoded paths ✅
 - `scripts/compare_models.py` for benchmarking models against real screenshots ✅
 - Model learnings documented in CLAUDE.md
 - Logs at: `~/code/github.com/JudgeJules/mac-file-automation/logs/screenshot_renamer.err`
-- **Pending**: test vision path (qwen3-vl:8b) on a real image-only screenshot
+- **Finder defaults**: column view set via macOS defaults script; Date Added sort requires manual "Use as Defaults" in Finder (per-folder, not enforceable via defaults write)
+- **Model output cleanup**: both naming_client.py and ollama_client.py now sanitize descriptions to kebab-case before validation rather than rejecting outright — reduces fallback rate
+- **Key learnings added to CLAUDE.md**:
+  - qwen3-vl:8b does not support structured output (format schema silences it) — use plain-text prompt, parse description directly
+  - naming_client.py now cleans model output to kebab-case before validation
 
 ### Known issues / still to do:
 - **Raycast** needs Cmd+Space set manually as its hotkey (System Settings → Keyboard → Shortcuts → Spotlight → uncheck, then set in Raycast prefs)
