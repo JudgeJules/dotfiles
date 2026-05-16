@@ -62,3 +62,10 @@
     side-by-side = true     # Show old/new side by side instead of unified diff
     line-numbers = true
     syntax-theme = Dracula
+
+# Per-org identity — overrides [user] above based on repo path
+[includeIf "gitdir:~/code/github.com/JudgeJules/"]
+    path = ~/.gitconfig.personal
+
+[includeIf "gitdir:~/code/github.com/vectoragent007ai-cmd/"]
+    path = ~/.gitconfig.agent

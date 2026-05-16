@@ -217,7 +217,17 @@ _docker_drift_check() {
 precmd_functions+=(_docker_drift_check)
 
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# bun completions
+[ -s "/Users/jordan/.bun/_bun" ] && source "/Users/jordan/.bun/_bun"
+
 # ──────────────────────────────────────────────
-# zoxide init — must be last
 # ──────────────────────────────────────────────
-eval "$(zoxide init zsh --cmd cd)"
+
+eval "$(zoxide init zsh)"
+
+# claude-ops — open ops workspace (settings.json handles --add-dir automatically)
+alias claude-ops='cd ~/Projects && claude'

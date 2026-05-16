@@ -61,6 +61,7 @@ cask "jetbrains-toolbox"    # Installs/updates any JetBrains IDE from one place
 # ──────────────────────────────────────────────
 # Dev Tools
 # ──────────────────────────────────────────────
+cask "claude-code"  # Claude Code CLI — AI coding assistant (update with: brew upgrade claude-code)
 cask "docker"       # Docker Desktop — containers, compose, Docker daemon
 cask "ollama"       # Local LLM runtime — runs models on Metal GPU (host, not Docker)
 
