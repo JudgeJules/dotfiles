@@ -231,3 +231,19 @@ eval "$(zoxide init zsh)"
 
 # claude-ops — open ops workspace (settings.json handles --add-dir automatically)
 alias claude-ops='cd ~/Projects && claude'
+
+# work <org>/<repo> — cd into a repo and launch Claude with that project's context
+work() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: work <org>/<repo>"
+        echo "       work vectoragent007ai-cmd/timr"
+        return 1
+    fi
+    local path="$HOME/code/github.com/$1"
+    if [[ ! -d "$path" ]]; then
+        echo "Not found: $path"
+        echo "Clone it first with: ghc $1"
+        return 1
+    fi
+    cd "$path" && claude
+}
